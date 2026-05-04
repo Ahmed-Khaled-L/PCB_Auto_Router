@@ -1,0 +1,24 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Python Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pygame/C-extensions
+*.so
+
+# Editor & IDE configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+*.log

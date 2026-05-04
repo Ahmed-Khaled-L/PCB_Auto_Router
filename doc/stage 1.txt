@@ -1,0 +1,29 @@
+Yes, this absolutely concludes Level 1. The screenshot perfectly demonstrates a successful implementation of Lee's Algorithm. The blue trace found a valid, shortest-possible orthogonal path connecting the two green pads while strictly avoiding the red keep-out zone. 
+
+Since you are running this through a compositor that gives that nice background transparency to your Pygame window, it already looks like a solid technical demo.
+
+Here is an overview of the current state of the engine, what has been achieved, and the critical limitations that need to be addressed as you move forward.
+
+### **Current State & Achievements**
+* **Decoupled Architecture:** You have successfully separated the state logic (`Grid`, `Node`), the mathematical solver (`BFSRouter`), and the UI (`Renderer`). 
+* **Guaranteed Pathfinding:** The BFS implementation guarantees that if a path exists, it will be found, and it will be the shortest possible route on an unweighted 4-way grid.
+* **State-Space Representation:** The matrix correctly handles node states, identifying obstacles and dynamically adjusting valid neighbors during the search phase.
+
+### **Current Limitations**
+
+**1. Visualization Limitations**
+* **Instant Rendering:** The script calculates the entire path in the background and instantly draws the final result. There is no visual animation of the BFS queue expanding (the "flood fill" effect). This makes it impossible to visually debug how many unnecessary nodes the algorithm is exploring.
+* **No Search Space Highlighting:** You cannot currently see the "visited" nodes versus the final "path" nodes, which is a key metric for proving search efficiency in your final report.
+
+**2. Algorithmic Limitations (The BFS Problem)**
+* **Blind Searching:** BFS explores uniformly in all directions like a ripple in a pond. It wastes massive amounts of memory and CPU cycles searching nodes moving *away* from the target. On a 1000x1000 grid, this will severely lag.
+* **Single-Layer Only:** The logic currently assumes a single-layer routing environment. It has no concept of a Z-axis (vias) to jump a trace to a bottom copper layer to bypass an obstacle.
+
+**3. Real-World & Electrical Discrepancies**
+* **Lack of Design Rule Checking (DRC):** In physical PCB design, traces require specific clearances to avoid arcing. Your grid allows the blue trace to run immediately adjacent to the red obstacle. Real auto-routers enforce spacing rules.
+* **Primitive Geometry:** The model assumes pads, traces, and spaces are all exactly one "cell" wide. Real-world components have specific pin pitches (e.g., 2.54mm headers vs. 0.5mm SMD ICs) and traces have varying physical widths depending on current load.
+* **No Bend Penalties:** As discussed previously, the router doesn't care how many 90-degree turns it makes, whereas a real electrical environment penalizes unnecessary corners due to signal integrity concerns.
+
+---
+
+To address the visualization limits and prepare for your Phase 5 report, would you like to add a quick animation loop to Pygame to visualize the BFS flood-fill expanding in real-time, or would you prefer to jump straight into Level 2 and start building the A* heuristic equations?

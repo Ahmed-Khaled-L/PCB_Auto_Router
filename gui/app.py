@@ -11,11 +11,11 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Load the Map using the new JSON Data-Driven Loader
-        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test1_weaver.json")
+        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test2_mega_mcu.json")
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
-        self.router = AStarRouter(self.grid)
-        self.optimizer = SimulatedAnnealingOptimizer(self.grid, self.router)
+        self.router = BFSRouter(self.grid)
+        self.optimizer = GreedyOptimizer(self.grid, self.router)
         
         # Inject the optimizer into the manager
         self.manager.optimizer = self.optimizer
@@ -46,7 +46,7 @@ class App:
                 
             # Log the O(1) performance metrics PER NET
             net_id = getattr(net, 'id', f"Net_Fallback") 
-            self.logger.log_net_metrics("AStar_SA", self.grid, net, net_id, elapsed_time)
+            self.logger.log_net_metrics("BFS_Greedy", self.grid, net, net_id, elapsed_time)
                 
             # Clear the mathematical search space for the next net's calculation
             self.grid.reset_search_states() 

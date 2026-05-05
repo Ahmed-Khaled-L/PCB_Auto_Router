@@ -18,7 +18,8 @@ class MapLoader:
         "PushButton": comps.PushButton,
         "Potentiometer": comps.Potentiometer,
         "SMD_Passive": comps.SMD_Passive,
-        "QFP_IC": comps.QFP_IC
+        "QFP_IC": comps.QFP_IC,
+        "Battery": comps.Battery,
     }
 
     @staticmethod

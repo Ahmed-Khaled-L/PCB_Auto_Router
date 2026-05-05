@@ -97,6 +97,14 @@ class Transistor_TO92(Component):
         self.add_pin("2", local_x=1, local_y=0) # Base
         self.add_pin("3", local_x=2, local_y=0) # Collector / Emitter
 
+class Battery(Component):
+    """Standard Power source footprint."""
+    def __init__(self, grid, ref_des, start_x, start_y):
+        # A 4x5 block, dark green body
+        super().__init__(grid, ref_des, start_x, start_y, width=4, height=5, body_color=(40, 100, 50))
+        self.add_pin("+", local_x=0, local_y=0)
+        self.add_pin("-", local_x=0, local_y=4)
+
 
 # ==========================================
 # --- ELECTROMECHANICAL & CONNECTORS ---

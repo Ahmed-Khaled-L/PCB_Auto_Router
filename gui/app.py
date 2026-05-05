@@ -11,7 +11,7 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Load the Map using the new JSON Data-Driven Loader
-        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test2_mega_mcu.json")
+        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test1_weaver.json")
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
         self.router = AStarRouter(self.grid)

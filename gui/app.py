@@ -1,61 +1,47 @@
 import pygame
 import sys
-from core.net import Net # Needed for the dummy net in metrics
 from core.astar_router import AStarRouter
 from gui.renderer import Renderer
 from utils.map_loader import MapLoader
 from utils.metrics_logger import MetricsLogger
 
-from maps.map1 import load_map
-
-# Import your new SA Manager
-from core.SimulatedAnnealingManager import SimulatedAnnealingManager
-
 class App:
     def __init__(self):
-        # 1. Load the original MultiNetManager (which HAS get_next_net)
-        # self.grid, self.manager, self.components = MapLoader.load_deadlock_test()
+        # 1. Load the Map (using pocket_trap for testing)
         self.grid, self.manager, self.components = MapLoader.load_pocket_trap_test()
         
+        # 2. Setup Router
         self.router = AStarRouter(self.grid)
-        self.current_net = None
-        self.renderer = Renderer(self.grid, cell_size=20) 
+        self.renderer = Renderer(self.grid, cell_size=20)
+        
+        # ---------------------------------------------------------
+        # 3. COMPUTE PHASE (Instant Background Calculation)
+        # ---------------------------------------------------------
+        print("Calculating entire board routing in the background...")
+        self.logger = MetricsLogger()
+        self.logger.start_timer()
+        
+        for net in self.manager.nets:
+            success = self.router.route(net)
+            if success:
+                self.grid.lock_path(net)
+            # Clear the mathematical search space for the next net's calculation
+            self.grid.reset_search_states() 
+            
+        total_time = self.logger.stop_timer()
+        print(f"Routing complete in {total_time:.4f} ms! Launching GUI Playback...")
+        
+        # ---------------------------------------------------------
+        # 4. PLAYBACK PHASE SETUP
+        # ---------------------------------------------------------
         self.running = True
         self.clock = pygame.time.Clock()
-        self.steps_per_frame = 10
+        self.steps_per_frame = 15  # Adjust this to change animation speed
         
-        self.logger = MetricsLogger()
-        self.total_compute_time = 0.0
-        self.metrics_saved = False
-        
- 
-
-
-
-        
-
-        self.manager.sort_nets_shortest_first() 
-        
-       
-        
-
-        # sa_manager = SimulatedAnnealingManager(self.grid, self.manager.nets, self.router)
-        # self.manager.nets = sa_manager.optimize_and_route(initial_temp=100.0, cooling_rate=0.90)
-        # # self.manager.nets = best_sequence
-        # self.manager.current_index = 0 
-
-        
-        self._load_next_net()
-
-    def _load_next_net(self):
-        """Pulls the next net from the queue and resets the search canvas."""
-        self.current_net = self.manager.get_next_net()
-        
-        if self.current_net:
-            print(f"--- Starting Route for Net from ({self.current_net.start_node.x}, {self.current_net.start_node.y}) ---")
-            self.router.initialize_search(self.current_net)
-        else:
-            print("--- All nets processed ---")
+        # Playback tracking variables
+        self.playback_net_index = 0
+        self.playback_history_index = 0
+        self.animating_search = True 
 
     def process_events(self):
         for event in pygame.event.get():
@@ -63,46 +49,45 @@ class App:
                 self.running = False
 
     def update(self):
-        # 3. Route processing with performance tracking
-        if self.current_net and not self.router.is_finished:
-            self.logger.start_timer()
-            
-            for _ in range(self.steps_per_frame):
-                result = self.router.step()
-                
-                # NET ROUTED SUCCESSFULLY
-                if result is True:
-                    print("Path found! Locking trace into grid.")
-                    self.grid.lock_path(self.current_net)    
-                    self.grid.reset_search_states()          
-                    self._load_next_net()                    
-                    break 
-                    
-                # DEADLOCK DETECTED
-                elif result is False:
-                    print("DEADLOCK DETECTED! Net blocked by existing traces.")
-                    self.grid.reset_search_states()
-                    self._load_next_net()
+        """Plays back the 'tape' recorded in net.search_history frame by frame."""
+        # Stop updating if all nets are fully animated
+        if self.playback_net_index >= len(self.manager.nets):
+            return 
+
+        current_net = self.manager.nets[self.playback_net_index]
+
+        # Stage A: Animate the purple search space expanding
+        if self.animating_search:
+            for _ in range(self.steps_per_frame): 
+                if self.playback_history_index < len(current_net.search_history):
+                    # Pull the next node from the history tape and tell the grid to render it
+                    node = current_net.search_history[self.playback_history_index]
+                    node.visited = True 
+                    self.playback_history_index += 1
+                else:
+                    # History exhausted! Move to Stage B.
+                    self.animating_search = False
                     break
-
-            elapsed = self.logger.stop_timer()
-            self.total_compute_time += elapsed
-
-        # 4. Save metrics once all routing is finished
-        elif not self.current_net and not self.metrics_saved:
-            # Passing a dummy net just to log total board time and visited nodes
-            dummy_net = Net(self.grid.get_node(0,0), self.grid.get_node(0,0))
-            self.logger.log_metrics("AStar_MultiNet", self.grid, dummy_net, self.total_compute_time)
-            self.metrics_saved = True
+                    
+        # Stage B: Lock in the solid path and cue up the next net
+        else:
+            self.playback_net_index += 1
+            self.playback_history_index = 0
+            self.animating_search = True
+            
+            # Wipe the purple visited cells off the screen so the next net starts fresh
+            self.grid.reset_search_states()
 
     def render(self):
-        # 5. Corrected single render loop
-        self.renderer.draw(self.manager.get_all_nets())
+        # CRITICAL TRICK: We only pass nets to the renderer that have FINISHED animating.
+        # This prevents the renderer from drawing traces before the search animation finishes.
+        completed_nets = self.manager.nets[:self.playback_net_index]
+        self.renderer.draw(completed_nets)
         
         if hasattr(self, 'components') and self.components:
             self.renderer.draw_components(self.components)
             
-        pygame.display.flip() # Push the final frame to the monitor
+        pygame.display.flip()
 
     def run(self):
         while self.running:

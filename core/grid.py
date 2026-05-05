@@ -54,6 +54,7 @@ class Grid:
             # By setting this to True, get_neighbors() will automatically 
             # prevent future nets from stepping on these coordinates.
             node.is_obstacle = True
+            node.is_trace = True # <-- NEW: Mark it as a trace
             
         print(f"[GRID] Locked path for net from ({net.start_node.x}, {net.start_node.y}) to ({net.end_node.x}, {net.end_node.y}).")
 
@@ -77,6 +78,7 @@ class Grid:
                 for node in net.path:
                     # Unmark as obstacle so future runs can use these cells
                     node.is_obstacle = False
+                    node.is_trace = False # <-- NEW: Clear the trace flag
             net.path = [] # Clear the stored path in the net
             
         # Clear the visited and parent flags for the next A* run

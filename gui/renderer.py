@@ -74,7 +74,9 @@ class Renderer:
                     
                 rect = pygame.Rect(screen_x, screen_y, size, size)
                 
-                if node.is_obstacle:
+                # <-- NEW LOGIC HERE -->
+                # Only draw the red box if it's an obstacle AND NOT a trace
+                if node.is_obstacle and not node.is_trace:
                     pygame.draw.rect(self.screen, self.colors["obstacle"], rect)
                 elif node.visited:
                     pygame.draw.rect(self.screen, self.colors["visited"], rect)
@@ -128,3 +130,26 @@ class Renderer:
                 
                 pygame.draw.rect(self.screen, color, pin_rect)
                 pygame.draw.rect(self.screen, (0,0,0), pin_rect, 1)
+
+    def pan_camera(self, dx, dy):
+        """Moves the camera and invalidates the trace cache."""
+        self.camera_x += dx
+        self.camera_y += dy
+        self._trace_cache.clear() # Coordinates changed, must recalculate
+
+    def zoom_camera(self, zoom_factor, mouse_x, mouse_y):
+        """Zooms in/out while keeping the board centered on the mouse cursor."""
+        # 1. Find where the mouse is in the 'world' right now
+        world_x = (mouse_x - self.camera_x) / self.zoom
+        world_y = (mouse_y - self.camera_y) / self.zoom
+        
+        # 2. Apply the zoom (Clamp between 0.2x and 5.0x to prevent breaking)
+        self.zoom += zoom_factor
+        self.zoom = max(0.2, min(self.zoom, 5.0))
+        
+        # 3. Adjust the camera so the world point stays perfectly under the mouse
+        self.camera_x = mouse_x - (world_x * self.zoom)
+        self.camera_y = mouse_y - (world_y * self.zoom)
+        
+        # 4. Clear cache because all pixel coordinates have changed
+        self._trace_cache.clear()

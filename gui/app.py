@@ -14,7 +14,7 @@ class App:
         self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test2_mega_mcu.json")
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
-        self.router = BFSRouter(self.grid)
+        self.router = AStarRouter(self.grid)
         self.optimizer = GreedyOptimizer(self.grid, self.router)
         
         # Inject the optimizer into the manager
@@ -58,16 +58,48 @@ class App:
         # ---------------------------------------------------------
         self.running = True
         self.clock = pygame.time.Clock()
-        self.steps_per_frame = 5  # Adjusted for smoother animation viewing
+        self.steps_per_frame = 100  # Adjusted for smoother animation viewing
         
         self.playback_net_index = 0
         self.playback_history_index = 0
         self.animating_search = True
 
+        # Add these two variables to the bottom of __init__ to track panning
+        self.dragging = False
+        self.last_mouse_pos = (0, 0)
+
+
+
     def process_events(self):
+        """Handles PyGame inputs for closing the app and camera navigation."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+                
+            # --- NEW: Camera Pan (Click and Drag) ---
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Trigger pan on Left click (1), Middle click (2), or Right click (3)
+                if event.button in (1, 2, 3): 
+                    self.dragging = True
+                    self.last_mouse_pos = event.pos
+                    
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button in (1, 2, 3):
+                    self.dragging = False
+                    
+            elif event.type == pygame.MOUSEMOTION:
+                if self.dragging:
+                    dx = event.pos[0] - self.last_mouse_pos[0]
+                    dy = event.pos[1] - self.last_mouse_pos[1]
+                    self.renderer.pan_camera(dx, dy)
+                    self.last_mouse_pos = event.pos
+                    
+            # --- NEW: Camera Zoom (Mouse Wheel) ---
+            elif event.type == pygame.MOUSEWHEEL:
+                # event.y is positive for scrolling up (zoom in), negative for down
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                zoom_speed = 0.15 # Adjust this to make zooming faster or slower
+                self.renderer.zoom_camera(event.y * zoom_speed, mouse_x, mouse_y)
 
     def update(self):
         """Plays back the 'tape' recorded in net.search_history frame by frame."""
@@ -115,7 +147,7 @@ class App:
             self.process_events()
             self.update()
             self.render()
-            self.clock.tick(60)
+            self.clock.tick(0)
             
         pygame.quit()
         sys.exit()

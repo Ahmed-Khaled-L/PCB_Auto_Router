@@ -7,7 +7,8 @@ class AStarRouter(BaseRouter):
         """Standard, synchronous A* search."""
         start_node = net.start_node
         end_node = net.end_node
-
+        start_node.parent = None
+        
         open_set = []
         counter = 0 
         g_score = {start_node: 0}

@@ -23,6 +23,8 @@ class SimulatedAnnealingOptimizer(BaseOptimizer):
                 total_wirelength += len(net.path)
                 self.grid.lock_path(net)
                 
+            self.grid.reset_search_states()
+                
         energy = (unrouted_count * 10000) + total_wirelength
         return energy, unrouted_count
 

@@ -1,0 +1,46 @@
+{
+  "grid": {
+    "width": 90,
+    "height": 60
+  },
+  "components": [
+    {"type": "Battery", "ref": "BAT1", "x": 5, "y": 5},
+    {"type": "PushButton", "ref": "SW1", "x": 5, "y": 20},
+    {"type": "Capacitor", "ref": "C1", "x": 15, "y": 15},
+    
+    {"type": "QFP_IC", "ref": "U1", "x": 40, "y": 25, "args": {"pins_per_side": 6}},
+    
+    {"type": "Header", "ref": "J_OUT", "x": 80, "y": 20, "args": {"num_pins": 12}},
+    
+    {"type": "Resistor", "ref": "R1", "x": 60, "y": 10},
+    {"type": "Resistor", "ref": "R2", "x": 60, "y": 15},
+    {"type": "LED", "ref": "D1", "x": 70, "y": 9, "args": {"color_rgb": [255, 50, 50]}},
+    {"type": "LED", "ref": "D2", "x": 70, "y": 14, "args": {"color_rgb": [50, 255, 50]}}
+  ],
+  "nets": [
+    {"start": "BAT1:+", "end": "SW1:1A", "color": [255, 50, 50]},
+    {"start": "SW1:2B", "end": "C1:1", "color": [200, 50, 50]},
+    {"start": "C1:1", "end": "U1:L1", "color": [255, 100, 100]},
+    {"start": "BAT1:-", "end": "C1:2", "color": [100, 100, 100]},
+    {"start": "C1:2", "end": "U1:B6", "color": [100, 100, 100]},
+    
+    {"start": "U1:T1", "end": "R1:1", "color": [255, 200, 50]},
+    {"start": "R1:2", "end": "D1:A", "color": [255, 200, 50]},
+    {"start": "D1:K", "end": "U1:T2", "color": [100, 100, 100]},
+    
+    {"start": "U1:T3", "end": "R2:1", "color": [50, 255, 255]},
+    {"start": "R2:2", "end": "D2:A", "color": [50, 255, 255]},
+    {"start": "D2:K", "end": "U1:T4", "color": [100, 100, 100]},
+    
+    {"start": "U1:R1", "end": "J_OUT:P1", "color": [50, 50, 255]},
+    {"start": "U1:R2", "end": "J_OUT:P2", "color": [50, 100, 255]},
+    {"start": "U1:R3", "end": "J_OUT:P3", "color": [50, 150, 255]},
+    {"start": "U1:R4", "end": "J_OUT:P4", "color": [50, 200, 255]},
+    {"start": "U1:R5", "end": "J_OUT:P5", "color": [50, 250, 255]},
+    {"start": "U1:R6", "end": "J_OUT:P6", "color": [50, 255, 200]},
+    
+    {"start": "U1:B1", "end": "J_OUT:P10", "color": [255, 50, 255]},
+    {"start": "U1:B2", "end": "J_OUT:P11", "color": [200, 50, 255]},
+    {"start": "U1:B3", "end": "J_OUT:P12", "color": [150, 50, 255]}
+  ]
+}

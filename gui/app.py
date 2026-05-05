@@ -1,7 +1,9 @@
 import pygame
 import sys
 from core.astar_router import AStarRouter
+from core.bfs_router import BFSRouter
 from core.sa_optimizer import SimulatedAnnealingOptimizer # Import the Optimizer
+from core.greedy_optimizer import GreedyOptimizer # Import the Optimizer
 from gui.renderer import Renderer
 from utils.map_loader import MapLoader
 from utils.metrics_logger import MetricsLogger
@@ -9,7 +11,7 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Load the Map using the new JSON Data-Driven Loader
-        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/esp32_layout.json")
+        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test1_weaver.json")
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
         self.router = AStarRouter(self.grid)

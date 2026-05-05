@@ -17,14 +17,16 @@ class Renderer:
                 "obstacle": (200, 50, 50), "visited": (70, 70, 90),
                 "chip_border": (100, 100, 110), "pin": (192, 192, 192),
                 "pin_1": (255, 200, 50), "text": (220, 220, 220),
-                "pad_border": (255, 255, 255)
+                "pad_border": (255, 255, 255),
+                "trace": (220, 140, 70)  # <-- NEW: Unified Copper Color
             },
             "light": {
                 "bg": (240, 240, 240), "grid": (200, 200, 200), 
                 "obstacle": (220, 80, 80), "visited": (200, 200, 255),
                 "chip_border": (50, 50, 60), "pin": (100, 100, 100),
                 "pin_1": (200, 150, 20), "text": (30, 30, 30),
-                "pad_border": (0, 0, 0)
+                "pad_border": (0, 0, 0),
+                "trace": (200, 100, 40)  # <-- NEW: Unified Copper Color
             }
         }
         self.colors = self.themes.get(theme, self.themes["dark"])
@@ -80,21 +82,27 @@ class Renderer:
                 pygame.draw.rect(self.screen, self.colors["grid"], rect, 1)
 
         # 2. Draw Cached Traces
+        # In gui/renderer.py -> draw()
+
+        # 2. Draw Cached Traces
         for net in nets:
             if net.path and len(net.path) > 1:
                 points = self._get_cached_points(net)
                 trace_thickness = max(2, int(self.cell_size * self.zoom * 0.35))
                 
-                pygame.draw.lines(self.screen, net.color, False, points, trace_thickness)
+                # USE THE UNIFIED THEME COLOR HERE
+                trace_color = self.colors["trace"]
+                
+                pygame.draw.lines(self.screen, trace_color, False, points, trace_thickness)
                 for pt in points:
-                    pygame.draw.circle(self.screen, net.color, pt, trace_thickness // 2)
+                    pygame.draw.circle(self.screen, trace_color, pt, trace_thickness // 2)
                     
-            # Draw Pads
+            # Draw Pads (Also using the unified trace color)
             sx, sy, size = self._world_to_screen(net.start_node.x, net.start_node.y)
             ex, ey, _ = self._world_to_screen(net.end_node.x, net.end_node.y)
             
-            pygame.draw.rect(self.screen, net.color, (sx, sy, size, size))
-            pygame.draw.rect(self.screen, net.color, (ex, ey, size, size))
+            pygame.draw.rect(self.screen, trace_color, (sx, sy, size, size))
+            pygame.draw.rect(self.screen, trace_color, (ex, ey, size, size))
             pygame.draw.rect(self.screen, self.colors["pad_border"], (sx, sy, size, size), 2)
             pygame.draw.rect(self.screen, self.colors["pad_border"], (ex, ey, size, size), 2)
 

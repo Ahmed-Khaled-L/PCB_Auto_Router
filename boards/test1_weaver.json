@@ -1,0 +1,29 @@
+{
+  "grid": {
+    "width": 60,
+    "height": 40
+  },
+  "components": [
+    {"type": "Header", "ref": "J1", "x": 5, "y": 10, "args": {"num_pins": 4}},
+    {"type": "Header", "ref": "J2", "x": 5, "y": 25, "args": {"num_pins": 4}},
+    {"type": "DIP_IC", "ref": "U1", "x": 25, "y": 12, "args": {"pin_pairs": 8}},
+    {"type": "DIP_IC", "ref": "U2", "x": 45, "y": 12, "args": {"pin_pairs": 8}},
+    {"type": "Resistor", "ref": "R1", "x": 15, "y": 15},
+    {"type": "Resistor", "ref": "R2", "x": 15, "y": 20},
+    {"type": "Resistor", "ref": "R3", "x": 35, "y": 18}
+  ],
+  "nets": [
+    {"start": "J1:P1", "end": "U2:L1", "color": [255, 50, 50]},
+    {"start": "J2:P4", "end": "U1:L8", "color": [50, 255, 50]},
+    {"start": "J1:P4", "end": "U1:L1", "color": [50, 50, 255]},
+    {"start": "J2:P1", "end": "U2:L8", "color": [255, 255, 50]},
+    {"start": "U1:R1", "end": "U2:L4", "color": [255, 150, 50]},
+    {"start": "U1:R8", "end": "U2:L5", "color": [150, 50, 255]},
+    {"start": "U1:R4", "end": "R3:1", "color": [50, 255, 255]},
+    {"start": "R3:2", "end": "U2:L2", "color": [50, 255, 255]},
+    {"start": "J1:P2", "end": "R1:1", "color": [200, 200, 200]},
+    {"start": "R1:2", "end": "U1:L4", "color": [200, 200, 200]},
+    {"start": "J2:P2", "end": "R2:1", "color": [100, 100, 100]},
+    {"start": "R2:2", "end": "U1:L5", "color": [100, 100, 100]}
+  ]
+}

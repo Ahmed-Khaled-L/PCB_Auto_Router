@@ -4,6 +4,7 @@ from core.interfaces.base_router import BaseRouter
 class BFSRouter(BaseRouter):
     def route(self, net):
         """Standard, synchronous Breadth-First Search."""
+        net.start_node.parent = None
         queue = deque([net.start_node])
         net.start_node.visited = True
 

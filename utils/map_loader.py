@@ -6,14 +6,18 @@ import core.component as comps
 
 class MapLoader:
     # String-to-Class Registry for the Factory Pattern
+    # Expanded String-to-Class Registry
     COMPONENT_REGISTRY = {
         "DIP_IC": comps.DIP_IC,
-        "Resistor": comps.Resistor,
         "Header": comps.Header,
+        "Resistor": comps.Resistor,
         "Capacitor": comps.Capacitor,
         "Diode": comps.Diode,
-        "Battery": comps.Battery,
-        "Transistor": comps.Transistor,
+        "LED": comps.LED,
+        "Transistor": comps.Transistor_TO92,
+        "PushButton": comps.PushButton,
+        "Potentiometer": comps.Potentiometer,
+        "SMD_Passive": comps.SMD_Passive,
         "QFP_IC": comps.QFP_IC
     }
 

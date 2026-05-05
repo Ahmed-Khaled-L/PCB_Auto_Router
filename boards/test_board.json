@@ -1,0 +1,12 @@
+{
+  "grid": {"width": 50, "height": 35},
+  "components": [
+    {"type": "PushButton", "ref": "SW1", "x": 5, "y": 5},
+    {"type": "LED", "ref": "D1", "x": 15, "y": 6, "args": {"color_rgb": [255, 50, 50]}},
+    {"type": "Potentiometer", "ref": "RV1", "x": 5, "y": 15},
+    {"type": "Transistor", "ref": "Q1", "x": 20, "y": 15}
+  ],
+  "nets": [
+    {"start": "SW1:2B", "end": "D1:A", "color": [200, 200, 50]}
+  ]
+}

@@ -1,3 +1,4 @@
+import time
 import pygame
 import sys
 from core.astar_router import AStarRouter
@@ -11,11 +12,11 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Load the Map using the new JSON Data-Driven Loader
-        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test1_weaver.json")
+        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test2_mega_mcu.json")
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
         self.router = AStarRouter(self.grid)
-        self.optimizer = GreedyOptimizer(self.grid, self.router)
+        self.optimizer = SimulatedAnnealingOptimizer(self.grid, self.router)
         
         # Inject the optimizer into the manager
         self.manager.optimizer = self.optimizer
@@ -26,12 +27,24 @@ class App:
         # ---------------------------------------------------------
         # 3. COMPUTE PHASE (Instant Background Calculation)
         # ---------------------------------------------------------
+        self.logger = MetricsLogger()
+        
         print("Optimizing sequence to prevent deadlocks...")
-        # This triggers the SA Optimizer you built!
-        self.manager.prepare_queue() 
+        # Start the global timer to include Optimizer time!
+        global_start_time = time.perf_counter() 
+        
+        self.manager.prepare_queue()
 
         print("Calculating final board routing...")
-        self.logger = MetricsLogger()
+        
+        # Track global stats
+        successful_routes = 0
+        failed_routes = 0
+        total_wirelength = 0
+        
+        # Dynamically get algorithm names
+        router_name = self.router.__class__.__name__
+        optimizer_name = self.optimizer.__class__.__name__ if self.optimizer else "None"
         
         for net in self.manager.nets:
             self.logger.start_timer()
@@ -43,14 +56,33 @@ class App:
             
             if success:
                 self.grid.lock_path(net)
+                successful_routes += 1
+                total_wirelength += len(net.path)
+            else:
+                failed_routes += 1
                 
             # Log the O(1) performance metrics PER NET
-            net_id = getattr(net, 'id', f"Net_Fallback") 
-            self.logger.log_net_metrics("BFS_Greedy", self.grid, net, net_id, elapsed_time)
-                
-            # Clear the mathematical search space for the next net's calculation
-            self.grid.reset_search_states() 
+            net_id = getattr(net, 'id', f"Net_Fallback")
+            self.logger.log_net_metrics(router_name, self.grid, net, net_id, elapsed_time)
             
+            # Clear the mathematical search space for the next net's calculation
+            self.grid.reset_search_states()
+        
+        # Stop global timer
+        global_time_ms = (time.perf_counter() - global_start_time) * 1000
+        
+        # Log the global summary!
+        self.logger.log_run_summary(
+            self.grid, 
+            router_name, 
+            optimizer_name, 
+            len(self.manager.nets), 
+            successful_routes, 
+            failed_routes, 
+            total_wirelength, 
+            global_time_ms
+        )
+
         print("Routing complete! Launching GUI Playback...")
         
         # ---------------------------------------------------------

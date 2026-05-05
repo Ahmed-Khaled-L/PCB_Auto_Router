@@ -53,14 +53,17 @@ class MapLoader:
                     return comp.get_pin(pin_name)
             raise ValueError(f"Could not find pin {address}")
 
-        # 2. Wire the Nets
+        prepared_nets = []
         for i, net_data in enumerate(data["nets"]):
             start_node = get_pin_by_address(net_data["start"])
             end_node = get_pin_by_address(net_data["end"])
             color = tuple(net_data.get("color", [50, 150, 255]))
             
             net = Net(start_node, end_node, color=color)
-            net.id = f"Net_{i+1}" # Set an ID for the metrics logger
-            manager.add_net(net)
+            net.id = f"Net_{i+1}" 
+            prepared_nets.append(net) # Add to local list
+
+        # 3. Instantiate the manager with the final, complete list
+        manager = MultiNetManager(nets=prepared_nets)
 
         return grid, manager, components

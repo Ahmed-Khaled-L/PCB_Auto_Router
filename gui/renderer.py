@@ -18,7 +18,8 @@ class Renderer:
                 "chip_border": (100, 100, 110), "pin": (192, 192, 192),
                 "pin_1": (255, 200, 50), "text": (220, 220, 220),
                 "pad_border": (255, 255, 255),
-                "trace": (220, 140, 70)  # <-- NEW: Unified Copper Color
+                "trace": (220, 140, 70),
+                "ratsnest": (200, 200, 50)  # <-- NEW: Yellow Ratsnest Color  # <-- NEW: Unified Copper Color
             },
             "light": {
                 "bg": (240, 240, 240), "grid": (200, 200, 200), 
@@ -26,7 +27,8 @@ class Renderer:
                 "chip_border": (50, 50, 60), "pin": (100, 100, 100),
                 "pin_1": (200, 150, 20), "text": (30, 30, 30),
                 "pad_border": (0, 0, 0),
-                "trace": (200, 100, 40)  # <-- NEW: Unified Copper Color
+                "trace": (200, 100, 40),
+                "ratsnest": (150, 150, 0)   # <-- NEW: Dark Yellow Ratsnest  # <-- NEW: Unified Copper Color
             }
         }
         self.colors = self.themes.get(theme, self.themes["dark"])
@@ -59,7 +61,8 @@ class Renderer:
             self._trace_cache[net] = points
         return self._trace_cache[net]
 
-    def draw(self, nets):
+    def draw(self, completed_nets, all_nets):
+        """Draws the grid, ratsnests, and completed traces."""
         self.screen.fill(self.colors["bg"])
         
         # 1. Draw Grid, Obstacles, and Visited Nodes
@@ -68,14 +71,11 @@ class Renderer:
                 node = self.grid.get_node(x, y)
                 screen_x, screen_y, size = self._world_to_screen(x, y)
                 
-                # Basic Frustum Culling (Don't draw off-screen cells)
                 if screen_x + size < 0 or screen_x > 1080 or screen_y + size < 0 or screen_y > 720:
                     continue
                     
                 rect = pygame.Rect(screen_x, screen_y, size, size)
                 
-                # <-- NEW LOGIC HERE -->
-                # Only draw the red box if it's an obstacle AND NOT a trace
                 if node.is_obstacle and not node.is_trace:
                     pygame.draw.rect(self.screen, self.colors["obstacle"], rect)
                 elif node.visited:
@@ -83,23 +83,33 @@ class Renderer:
                     
                 pygame.draw.rect(self.screen, self.colors["grid"], rect, 1)
 
-        # 2. Draw Cached Traces
-        # In gui/renderer.py -> draw()
+        # 2. Draw Ratsnest (Unrouted Nets)
+        for net in all_nets:
+            # If the net hasn't been animated yet, OR if it failed to route entirely
+            if net not in completed_nets or not net.path:
+                sx, sy, size = self._world_to_screen(net.start_node.x, net.start_node.y)
+                ex, ey, _ = self._world_to_screen(net.end_node.x, net.end_node.y)
+                
+                # Center the line inside the pad
+                center_offset = size // 2
+                start_pos = (sx + center_offset, sy + center_offset)
+                end_pos = (ex + center_offset, ey + center_offset)
+                
+                # Draw a thin, 1-pixel line connecting the pads
+                pygame.draw.line(self.screen, self.colors["ratsnest"], start_pos, end_pos, 1)
 
-        # 2. Draw Cached Traces
-        for net in nets:
+        # 3. Draw Cached Traces (Finished Routes)
+        for net in completed_nets:
             if net.path and len(net.path) > 1:
                 points = self._get_cached_points(net)
                 trace_thickness = max(2, int(self.cell_size * self.zoom * 0.35))
-                
-                # USE THE UNIFIED THEME COLOR HERE
                 trace_color = self.colors["trace"]
                 
                 pygame.draw.lines(self.screen, trace_color, False, points, trace_thickness)
                 for pt in points:
                     pygame.draw.circle(self.screen, trace_color, pt, trace_thickness // 2)
                     
-            # Draw Pads (Also using the unified trace color)
+            # Draw Pads 
             sx, sy, size = self._world_to_screen(net.start_node.x, net.start_node.y)
             ex, ey, _ = self._world_to_screen(net.end_node.x, net.end_node.y)
             

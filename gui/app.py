@@ -11,8 +11,13 @@ from utils.metrics_logger import MetricsLogger
 
 class App:
     def __init__(self):
+        # 1. Define and Load the Map
+        map_filepath = "boards/test2_mega_mcu.json"
+        
+        # Extract just the benchmark name (e.g., "test2_mega_mcu")
+        self.benchmark_name = map_filepath.split('/')[-1].replace('.json', '')
         # 1. Load the Map using the new JSON Data-Driven Loader
-        self.grid, self.manager, self.components = MapLoader.load_from_json("boards/test2_mega_mcu.json")
+        self.grid, self.manager, self.components = MapLoader.load_from_json(map_filepath)
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
         self.router = AStarRouter(self.grid)
@@ -22,7 +27,6 @@ class App:
         self.manager.optimizer = self.optimizer
         
         # Setup the new high-performance renderer
-        self.renderer = Renderer(self.grid, cell_size=20, theme="dark")
         
         # ---------------------------------------------------------
         # 3. COMPUTE PHASE (Instant Background Calculation)
@@ -73,6 +77,7 @@ class App:
         
         # Log the global summary!
         self.logger.log_run_summary(
+            self.benchmark_name,    # <-- Pass the benchmark name here!
             self.grid, 
             router_name, 
             optimizer_name, 
@@ -88,6 +93,9 @@ class App:
         # ---------------------------------------------------------
         # 4. PLAYBACK PHASE SETUP
         # ---------------------------------------------------------
+        self.renderer = Renderer(self.grid, cell_size=20, theme="dark")
+
+        
         self.running = True
         self.clock = pygame.time.Clock()
         self.steps_per_frame = 100  # Adjusted for smoother animation viewing
@@ -164,10 +172,10 @@ class App:
             self.grid.reset_search_states()
 
     def render(self):
-        # CRITICAL TRICK: We only pass nets to the renderer that have FINISHED animating.
-        # This prevents the renderer from drawing traces before the search animation finishes.
         completed_nets = self.manager.nets[:self.playback_net_index]
-        self.renderer.draw(completed_nets)
+        
+        # Pass BOTH completed_nets and ALL nets to the renderer so it can draw Ratsnests
+        self.renderer.draw(completed_nets, self.manager.nets)
         
         if hasattr(self, 'components') and self.components:
             self.renderer.draw_components(self.components)

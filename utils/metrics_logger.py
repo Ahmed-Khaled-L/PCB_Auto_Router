@@ -16,8 +16,7 @@ class MetricsLogger:
         # Global Run Summary Log
         if not os.path.exists(self.summary_file):
             with open(self.summary_file, "w") as f:
-                f.write("Timestamp,Grid_Size,Router,Optimizer,Total_Nets,Routed,Failed,Total_Wirelength,Total_Time_ms\n")
-
+                f.write("Timestamp,Benchmark,Grid_Size,Router,Optimizer,Total_Nets,Routed,Failed,Total_Wirelength,Total_Time_ms\n")
     def start_timer(self):
         """Starts the high-resolution performance counter."""
         self.start_time = time.perf_counter()
@@ -37,12 +36,11 @@ class MetricsLogger:
         with open(self.log_file, "a") as f:
             f.write(log_entry)
 
-    def log_run_summary(self, grid, router_name, optimizer_name, total_nets, routed, failed, total_length, total_time_ms):
+    def log_run_summary(self, benchmark_name, grid, router_name, optimizer_name, total_nets, routed, failed, total_length, total_time_ms):       
         """Logs global metrics for the entire optimization and routing run."""
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        log_entry = f"{timestamp},{grid.width}x{grid.height},{router_name},{optimizer_name},{total_nets},{routed},{failed},{total_length},{total_time_ms:.4f}\n"
-        
+        log_entry = f"{timestamp},{benchmark_name},{grid.width}x{grid.height},{router_name},{optimizer_name},{total_nets},{routed},{failed},{total_length},{total_time_ms:.4f}\n"        
         with open(self.summary_file, "a") as f:
             f.write(log_entry)
             
@@ -50,6 +48,7 @@ class MetricsLogger:
         print("\n" + "="*50)
         print("📈 ROUTING RUN SUMMARY")
         print("="*50)
+        print(f"Benchmark: {benchmark_name}")   # <-- NEW LINE
         print(f"Router:    {router_name}")
         print(f"Optimizer: {optimizer_name}")
         print(f"Board:     {grid.width}x{grid.height} cells")

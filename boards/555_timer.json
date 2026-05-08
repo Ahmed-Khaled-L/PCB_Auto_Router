@@ -1,0 +1,73 @@
+{
+    "grid": {
+        "width": 50,
+        "height": 40
+    },
+    "components": [
+        {
+            "type": "Header",
+            "ref": "J1",
+            "x": 5, "y": 15,
+            "args": {
+                "num_pins": 2
+            }
+        },
+        {
+            "type": "Header",
+            "ref": "J2",
+            "x": 45, "y": 20,
+            "args": {
+                "num_pins": 2
+            }
+        },
+        {
+            "type": "DIP_IC",
+            "ref": "U1",
+            "x": 20, "y": 18,
+            "args": {
+                "pin_pairs": 4, 
+                "row_spacing": 4
+            }
+        },
+        {
+            "type": "Resistor",
+            "ref": "R1",
+            "x": 20, "y": 10,
+            "args": {}
+        },
+        {
+            "type": "Resistor",
+            "ref": "R2",
+            "x": 28, "y": 18,
+            "args": {}
+        },
+        {
+            "type": "Capacitor",
+            "ref": "C1",
+            "x": 28, "y": 24,
+            "args": {}
+        },
+        {
+            "type": "Capacitor",
+            "ref": "C2",
+            "x": 28, "y": 30,
+            "args": {}
+        }
+    ],
+    "nets": [
+        {"start": "J1:P1", "end": "U1:R1"},
+        {"start": "U1:R1", "end": "U1:L4"},
+        {"start": "U1:R1", "end": "R1:1"},
+        {"start": "J1:P2", "end": "U1:L1"},
+        {"start": "U1:L1", "end": "J2:P2"},
+        {"start": "U1:L1", "end": "C1:2"},
+        {"start": "C1:2", "end": "C2:2"},
+        {"start": "U1:L3", "end": "J2:P1"},
+        {"start": "R1:2", "end": "U1:R2"},
+        {"start": "U1:R2", "end": "R2:1"},
+        {"start": "R2:2", "end": "U1:R3"},
+        {"start": "U1:R3", "end": "U1:L2"},
+        {"start": "U1:R3", "end": "C1:1"},
+        {"start": "U1:R4", "end": "C2:1"}
+    ]
+}

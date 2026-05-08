@@ -1,9 +1,10 @@
-# core/multi_net_manager.py
 class MultiNetManager:
     def __init__(self, nets):
         self.nets = nets
-        self.optimizer = None # Will be injected by the App
+        self.optimizer = None 
         self.current_index = 0
+
+        self._assign_net_groups()
 
     def _assign_net_groups(self):
         """Auto-detects shared nets and groups them into electrical highways."""
@@ -11,16 +12,21 @@ class MultiNetManager:
         for i, net in enumerate(self.nets):
             net.group_id = i
 
-        # 2. Merge groups if they share a pad (Poor-man's Union Find)
+        # 2. Merge groups if they share a pad (Coordinate-based Union Find)
         changed = True
         while changed:
             changed = False
             for n1 in self.nets:
                 for n2 in self.nets:
                     if n1.group_id != n2.group_id:
-                        # If they touch the same physical pin, they are electrically identical
-                        if (n1.start_node in (n2.start_node, n2.end_node) or 
-                            n1.end_node in (n2.start_node, n2.end_node)):
+                        # FIX: Compare via immutable coordinate tuples, NOT object identity!
+                        n1_start = (n1.start_node.x, n1.start_node.y)
+                        n1_end = (n1.end_node.x, n1.end_node.y)
+                        n2_start = (n2.start_node.x, n2.start_node.y)
+                        n2_end = (n2.end_node.x, n2.end_node.y)
+                        
+                        # If any physical pin locations overlap, they belong together
+                        if n1_start in (n2_start, n2_end) or n1_end in (n2_start, n2_end):
                             n2.group_id = n1.group_id
                             changed = True
 

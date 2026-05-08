@@ -12,7 +12,7 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Define and Load the Map
-        map_filepath = "boards/final_boss_mcu.json"  # <-- NEW: Data-Driven JSON Map Loader
+        map_filepath = "boards/test6_steiner_chokepoint.json"  # <-- NEW: Data-Driven JSON Map Loader
         
         # Extract just the benchmark name (e.g., "test2_mega_mcu")
         self.benchmark_name = map_filepath.split('/')[-1].replace('.json', '')
@@ -21,7 +21,7 @@ class App:
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
         self.router = BFSRouter(self.grid)
-        self.optimizer = GreedyOptimizer(self.grid, self.router)
+        self.optimizer = SimulatedAnnealingOptimizer(self.grid, self.router)
         
         # Inject the optimizer into the manager
         self.manager.optimizer = self.optimizer

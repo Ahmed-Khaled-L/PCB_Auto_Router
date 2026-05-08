@@ -1,0 +1,61 @@
+{
+    "grid": {
+        "width": 40,
+        "height": 30
+    },
+    "components": [
+        {
+            "type": "Header",
+            "ref": "GND_SRC",
+            "x": 5, "y": 14,
+            "args": {
+                "num_pins": 1
+            }
+        },
+        {
+            "type": "Header",
+            "ref": "DEST1",
+            "x": 35, "y": 5,
+            "args": {
+                "num_pins": 1
+            }
+        },
+        {
+            "type": "Header",
+            "ref": "DEST2",
+            "x": 35, "y": 14,
+            "args": {
+                "num_pins": 1
+            }
+        },
+        {
+            "type": "Header",
+            "ref": "DEST3",
+            "x": 35, "y": 23,
+            "args": {
+                "num_pins": 1
+            }
+        },
+        {
+            "type": "Header",
+            "ref": "WALL_TOP",
+            "x": 20, "y": 0,
+            "args": {
+                "num_pins": 14
+            }
+        },
+        {
+            "type": "Header",
+            "ref": "WALL_BOT",
+            "x": 20, "y": 15,
+            "args": {
+                "num_pins": 15
+            }
+        }
+    ],
+    "nets": [
+        {"id": "GND_A", "start": "GND_SRC:P1", "end": "DEST1:P1"},
+        {"id": "GND_B", "start": "GND_SRC:P1", "end": "DEST2:P1"},
+        {"id": "GND_C", "start": "GND_SRC:P1", "end": "DEST3:P1"}
+    ]
+}

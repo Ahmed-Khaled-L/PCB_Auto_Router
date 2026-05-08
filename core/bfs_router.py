@@ -4,6 +4,8 @@ from core.interfaces.base_router import BaseRouter
 class BFSRouter(BaseRouter):
     def route(self, net):
         """Standard, synchronous Breadth-First Search."""
+        net.search_history = []
+        net.path = []
         
         net.start_node.is_obstacle = False
         net.end_node.is_obstacle = False
@@ -23,7 +25,7 @@ class BFSRouter(BaseRouter):
                 # Target reached!
                 if current == net.end_node:
                     return self._reconstruct_path(current, net)
-
+                
                 for neighbor in self.grid.get_neighbors(current, net):
                     if not neighbor.visited:
                         neighbor.visited = True

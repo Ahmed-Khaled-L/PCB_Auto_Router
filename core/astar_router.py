@@ -37,7 +37,7 @@ class AStarRouter(BaseRouter):
                 if current_node == end_node:
                     return self._reconstruct_state_path(current_state, came_from, net)
                 
-                for neighbor in self.grid.get_neighbors(current_node):
+                for neighbor in self.grid.get_neighbors(current_node, net):
                     n_dx = neighbor.x - current_node.x
                     n_dy = neighbor.y - current_node.y
                     

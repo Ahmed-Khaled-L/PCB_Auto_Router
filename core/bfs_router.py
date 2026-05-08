@@ -24,7 +24,7 @@ class BFSRouter(BaseRouter):
                 if current == net.end_node:
                     return self._reconstruct_path(current, net)
 
-                for neighbor in self.grid.get_neighbors(current):
+                for neighbor in self.grid.get_neighbors(current, net):
                     if not neighbor.visited:
                         neighbor.visited = True
                         neighbor.parent = current

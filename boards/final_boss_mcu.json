@@ -1,57 +1,71 @@
 {
-    "width": 50,
-    "height": 40,
+    "grid": {
+        "width": 50,
+        "height": 40
+    },
     "components": [
         {
-            "ref_des": "MCU1",
-            "start_x": 20, "start_y": 15,
-            "width": 10, "height": 10,
-            "body_color": [40, 40, 45],
-            "pin_1_name": "VCC",
-            "pins": {
-                "VCC": {"dx": 0, "dy": 2}, "GND": {"dx": 0, "dy": 7},
-                "TX": {"dx": 10, "dy": 2}, "RX": {"dx": 10, "dy": 7},
-                "GPIO1": {"dx": 5, "dy": 10}, "GPIO2": {"dx": 7, "dy": 10}
+            "type": "QFP_IC",
+            "ref": "MCU1",
+            "x": 20, "y": 15,
+            "args": {
+                "width": 10, "height": 10,
+                "body_color": [40, 40, 45],
+                "pin_1_name": "VCC",
+                "pins": {
+                    "VCC": {"dx": 0, "dy": 2}, "GND": {"dx": 0, "dy": 7},
+                    "TX": {"dx": 10, "dy": 2}, "RX": {"dx": 10, "dy": 7},
+                    "GPIO1": {"dx": 5, "dy": 10}, "GPIO2": {"dx": 7, "dy": 10}
+                }
             }
         },
         {
-            "ref_des": "PROG_HDR",
-            "start_x": 42, "start_y": 15,
-            "width": 3, "height": 10,
-            "body_color": [150, 150, 150],
-            "pin_1_name": "TX",
-            "pins": {
-                "TX": {"dx": 0, "dy": 2}, "RX": {"dx": 0, "dy": 5}, "GND": {"dx": 0, "dy": 8}
+            "type": "Header",
+            "ref": "PROG_HDR",
+            "x": 42, "y": 15,
+            "args": {
+                "width": 3, "height": 10,
+                "body_color": [150, 150, 150],
+                "pin_1_name": "TX",
+                "pins": {
+                    "TX": {"dx": 0, "dy": 2}, "RX": {"dx": 0, "dy": 5}, "GND": {"dx": 0, "dy": 8}
+                }
             }
         },
         {
-            "ref_des": "BATTERY",
-            "start_x": 5, "start_y": 5,
-            "width": 6, "height": 6,
-            "body_color": [50, 150, 50],
-            "pin_1_name": "VCC",
-            "pins": {
-                "VCC": {"dx": 6, "dy": 1}, "GND": {"dx": 6, "dy": 4}
+            "type": "Battery",
+            "ref": "BATTERY",
+            "x": 5, "y": 5,
+            "args": {
+                "width": 6, "height": 6,
+                "body_color": [50, 150, 50],
+                "pin_1_name": "VCC",
+                "pins": {
+                    "VCC": {"dx": 6, "dy": 1}, "GND": {"dx": 6, "dy": 4}
+                }
             }
         },
         {
-            "ref_des": "LED_BAR",
-            "start_x": 20, "start_y": 32,
-            "width": 10, "height": 4,
-            "body_color": [150, 50, 50],
-            "pin_1_name": "IN1",
-            "pins": {
-                "IN1": {"dx": 2, "dy": 0}, "IN2": {"dx": 7, "dy": 0}
+            "type": "LED",
+            "ref": "LED_BAR",
+            "x": 20, "y": 32,
+            "args": {
+                "width": 10, "height": 4,
+                "body_color": [150, 50, 50],
+                "pin_1_name": "IN1",
+                "pins": {
+                    "IN1": {"dx": 2, "dy": 0}, "IN2": {"dx": 7, "dy": 0}
+                }
             }
         }
     ],
     "nets": [
-        {"id": "POWER", "start_comp": "BATTERY", "start_pin": "VCC", "end_comp": "MCU1", "end_pin": "VCC"},
-        {"id": "GROUND1", "start_comp": "BATTERY", "start_pin": "GND", "end_comp": "MCU1", "end_pin": "GND"},
-        {"id": "GROUND2", "start_comp": "MCU1", "start_pin": "GND", "end_comp": "PROG_HDR", "end_pin": "GND"},
-        {"id": "UART_TX", "start_comp": "MCU1", "start_pin": "TX", "end_comp": "PROG_HDR", "end_pin": "TX"},
-        {"id": "UART_RX", "start_comp": "MCU1", "start_pin": "RX", "end_comp": "PROG_HDR", "end_pin": "RX"},
-        {"id": "LED_SIG1", "start_comp": "MCU1", "start_pin": "GPIO1", "end_comp": "LED_BAR", "end_pin": "IN1"},
-        {"id": "LED_SIG2", "start_comp": "MCU1", "start_pin": "GPIO2", "end_comp": "LED_BAR", "end_pin": "IN2"}
+        {"start": "BATTERY:VCC", "end": "MCU1:VCC"},
+        {"start": "BATTERY:GND", "end": "MCU1:GND"},
+        {"start": "MCU1:GND", "end": "PROG_HDR:GND"},
+        {"start": "MCU1:TX", "end": "PROG_HDR:TX"},
+        {"start": "MCU1:RX", "end": "PROG_HDR:RX"},
+        {"start": "MCU1:GPIO1", "end": "LED_BAR:IN1"},
+        {"start": "MCU1:GPIO2", "end": "LED_BAR:IN2"}
     ]
 }

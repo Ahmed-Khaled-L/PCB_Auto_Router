@@ -1,32 +1,40 @@
 {
-    "width": 30,
-    "height": 30,
+    "grid": {
+        "width": 30,
+        "height": 30
+    },
     "components": [
         {
-            "ref_des": "U1",
-            "start_x": 5, "start_y": 10,
-            "width": 4, "height": 8,
-            "body_color": [50, 50, 50],
-            "pin_1_name": "A",
-            "pins": { 
-                "A": {"dx": 4, "dy": 2}, 
-                "B": {"dx": 4, "dy": 5} 
+            "type": "DIP_IC",
+            "ref": "U1",
+            "x": 5, "y": 10,
+            "args": {
+                "width": 4, "height": 8,
+                "body_color": [50, 50, 50],
+                "pin_1_name": "A",
+                "pins": { 
+                    "A": {"dx": 4, "dy": 2}, 
+                    "B": {"dx": 4, "dy": 5} 
+                }
             }
         },
         {
-            "ref_des": "U2",
-            "start_x": 21, "start_y": 10,
-            "width": 4, "height": 8,
-            "body_color": [50, 50, 50],
-            "pin_1_name": "A",
-            "pins": { 
-                "A": {"dx": -1, "dy": 2}, 
-                "B": {"dx": -1, "dy": 5} 
+            "type": "DIP_IC",
+            "ref": "U2",
+            "x": 21, "y": 10,
+            "args": {
+                "width": 4, "height": 8,
+                "body_color": [50, 50, 50],
+                "pin_1_name": "A",
+                "pins": { 
+                    "A": {"dx": -1, "dy": 2}, 
+                    "B": {"dx": -1, "dy": 5} 
+                }
             }
         }
     ],
     "nets": [
-        {"id": "CROSS_1", "start_comp": "U1", "start_pin": "B", "end_comp": "U2", "end_pin": "A"},
-        {"id": "CROSS_2", "start_comp": "U1", "start_pin": "A", "end_comp": "U2", "end_pin": "B"}
+        {"start": "U1:B", "end": "U2:A"},
+        {"start": "U1:A", "end": "U2:B"}
     ]
 }

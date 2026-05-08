@@ -1,34 +1,54 @@
 {
-    "width": 40,
-    "height": 30,
+    "grid": {
+        "width": 40,
+        "height": 30
+    },
     "components": [
         {
-            "ref_des": "PAD1",
-            "start_x": 5, "start_y": 14,
-            "width": 2, "height": 2,
-            "body_color": [100, 200, 100],
-            "pin_1_name": "1",
-            "pins": { "1": {"dx": 1, "dy": 0} }
+            "type": "Header",
+            "ref": "PAD1",
+            "x": 5, "y": 14,
+            "args": {
+                "num_pins": 1
+            }
         },
         {
-            "ref_des": "PAD2",
-            "start_x": 33, "start_y": 14,
-            "width": 2, "height": 2,
-            "body_color": [200, 100, 100],
-            "pin_1_name": "1",
-            "pins": { "1": {"dx": 0, "dy": 0} }
+            "type": "Header",
+            "ref": "PAD2",
+            "x": 33, "y": 14,
+            "args": {
+                "num_pins": 1
+            }
         },
         {
-            "ref_des": "WALL_TOP", "start_x": 15, "start_y": 5, "width": 10, "height": 2, "body_color": [200, 50, 50], "pin_1_name": "", "pins": {}
+            "type": "DIP_IC",
+            "ref": "WALL_TOP", 
+            "x": 15, "y": 5, 
+            "args": {
+                "pin_pairs": 2, 
+                "row_spacing": 9
+            }
         },
         {
-            "ref_des": "WALL_MID", "start_x": 23, "start_y": 5, "width": 2, "height": 20, "body_color": [200, 50, 50], "pin_1_name": "", "pins": {}
+            "type": "DIP_IC",
+            "ref": "WALL_MID", 
+            "x": 23, "y": 5, 
+            "args": {
+                "pin_pairs": 20, 
+                "row_spacing": 1
+            }
         },
         {
-            "ref_des": "WALL_BOT", "start_x": 15, "start_y": 23, "width": 10, "height": 2, "body_color": [200, 50, 50], "pin_1_name": "", "pins": {}
+            "type": "DIP_IC",
+            "ref": "WALL_BOT", 
+            "x": 15, "y": 23, 
+            "args": {
+                "pin_pairs": 2, 
+                "row_spacing": 9
+            }
         }
     ],
     "nets": [
-        {"id": "SIG_1", "start_comp": "PAD1", "start_pin": "1", "end_comp": "PAD2", "end_pin": "1"}
+        {"start": "PAD1:P1", "end": "PAD2:P1"}
     ]
 }

@@ -26,7 +26,7 @@ class Component:
             
         node = self.grid.get_node(global_x, global_y)
         if node:
-            node.is_obstacle = False 
+            # node.is_obstacle = False 
             self.pins[pin_name] = node
 
     def get_pin(self, pin_name):

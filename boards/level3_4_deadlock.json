@@ -9,13 +9,8 @@
             "ref": "U1",
             "x": 5, "y": 10,
             "args": {
-                "width": 4, "height": 8,
-                "body_color": [50, 50, 50],
-                "pin_1_name": "A",
-                "pins": { 
-                    "A": {"dx": 4, "dy": 2}, 
-                    "B": {"dx": 4, "dy": 5} 
-                }
+                "pin_pairs": 8, 
+                "row_spacing": 3
             }
         },
         {
@@ -23,18 +18,13 @@
             "ref": "U2",
             "x": 21, "y": 10,
             "args": {
-                "width": 4, "height": 8,
-                "body_color": [50, 50, 50],
-                "pin_1_name": "A",
-                "pins": { 
-                    "A": {"dx": -1, "dy": 2}, 
-                    "B": {"dx": -1, "dy": 5} 
-                }
+                "pin_pairs": 8, 
+                "row_spacing": 3
             }
         }
     ],
     "nets": [
-        {"start": "U1:B", "end": "U2:A"},
-        {"start": "U1:A", "end": "U2:B"}
+        {"start": "U1:R6", "end": "U2:L3"},
+        {"start": "U1:R3", "end": "U2:L6"}
     ]
 }

@@ -12,7 +12,7 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Define and Load the Map
-        map_filepath = "boards/level1_2_maze.json"  # <-- NEW: Data-Driven JSON Map Loader
+        map_filepath = "boards/final_boss_mcu.json"  # <-- NEW: Data-Driven JSON Map Loader
         
         # Extract just the benchmark name (e.g., "test2_mega_mcu")
         self.benchmark_name = map_filepath.split('/')[-1].replace('.json', '')
@@ -98,7 +98,7 @@ class App:
 
         self.running = True
         self.clock = pygame.time.Clock()
-        self.steps_per_frame = 100  # Adjusted for smoother animation viewing
+        self.steps_per_frame = 5  # Adjusted for smoother animation viewing
         
         self.playback_net_index = 0
         self.playback_history_index = 0
@@ -187,7 +187,7 @@ class App:
             self.process_events()
             self.update()
             self.render()
-            self.clock.tick(0)
+            self.clock.tick(60)
             
         pygame.quit()
         sys.exit()

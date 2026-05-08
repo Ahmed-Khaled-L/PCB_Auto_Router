@@ -3,7 +3,7 @@ import os
 import datetime
 
 class MetricsLogger:
-    def __init__(self, log_file="routing_metrics.log", summary_file="run_summary.log"):
+    def __init__(self, log_file="routing_metrics.csv", summary_file="run_summary.csv"):
         self.log_file = log_file
         self.summary_file = summary_file
         self.start_time = 0

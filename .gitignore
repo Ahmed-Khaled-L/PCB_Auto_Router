@@ -22,5 +22,6 @@ __pycache__/
 Thumbs.db
 
 *.log
+*.csv
 llm.py
 repo.txt

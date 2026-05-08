@@ -9,14 +9,7 @@
             "ref": "MCU1",
             "x": 20, "y": 15,
             "args": {
-                "width": 10, "height": 10,
-                "body_color": [40, 40, 45],
-                "pin_1_name": "VCC",
-                "pins": {
-                    "VCC": {"dx": 0, "dy": 2}, "GND": {"dx": 0, "dy": 7},
-                    "TX": {"dx": 10, "dy": 2}, "RX": {"dx": 10, "dy": 7},
-                    "GPIO1": {"dx": 5, "dy": 10}, "GPIO2": {"dx": 7, "dy": 10}
-                }
+                "pins_per_side": 9
             }
         },
         {
@@ -24,48 +17,32 @@
             "ref": "PROG_HDR",
             "x": 42, "y": 15,
             "args": {
-                "width": 3, "height": 10,
-                "body_color": [150, 150, 150],
-                "pin_1_name": "TX",
-                "pins": {
-                    "TX": {"dx": 0, "dy": 2}, "RX": {"dx": 0, "dy": 5}, "GND": {"dx": 0, "dy": 8}
-                }
+                "num_pins": 10
             }
         },
         {
             "type": "Battery",
             "ref": "BATTERY",
             "x": 5, "y": 5,
-            "args": {
-                "width": 6, "height": 6,
-                "body_color": [50, 150, 50],
-                "pin_1_name": "VCC",
-                "pins": {
-                    "VCC": {"dx": 6, "dy": 1}, "GND": {"dx": 6, "dy": 4}
-                }
-            }
+            "args": {}
         },
         {
-            "type": "LED",
+            "type": "DIP_IC",
             "ref": "LED_BAR",
             "x": 20, "y": 32,
             "args": {
-                "width": 10, "height": 4,
-                "body_color": [150, 50, 50],
-                "pin_1_name": "IN1",
-                "pins": {
-                    "IN1": {"dx": 2, "dy": 0}, "IN2": {"dx": 7, "dy": 0}
-                }
+                "pin_pairs": 4, 
+                "row_spacing": 9
             }
         }
     ],
     "nets": [
-        {"start": "BATTERY:VCC", "end": "MCU1:VCC"},
-        {"start": "BATTERY:GND", "end": "MCU1:GND"},
-        {"start": "MCU1:GND", "end": "PROG_HDR:GND"},
-        {"start": "MCU1:TX", "end": "PROG_HDR:TX"},
-        {"start": "MCU1:RX", "end": "PROG_HDR:RX"},
-        {"start": "MCU1:GPIO1", "end": "LED_BAR:IN1"},
-        {"start": "MCU1:GPIO2", "end": "LED_BAR:IN2"}
+        {"start": "BATTERY:+", "end": "MCU1:L2"},
+        {"start": "BATTERY:-", "end": "MCU1:L7"},
+        {"start": "MCU1:R7", "end": "PROG_HDR:P8"},
+        {"start": "MCU1:R2", "end": "PROG_HDR:P2"},
+        {"start": "MCU1:R5", "end": "PROG_HDR:P5"},
+        {"start": "MCU1:B5", "end": "LED_BAR:L1"},
+        {"start": "MCU1:B7", "end": "LED_BAR:L2"}
     ]
 }

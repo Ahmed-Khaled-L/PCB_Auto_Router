@@ -20,7 +20,7 @@ class App:
         self.grid, self.manager, self.components = MapLoader.load_from_json(map_filepath)
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
-        self.router = AStarRouter(self.grid)
+        self.router = BFSRouter(self.grid)
         self.optimizer = GreedyOptimizer(self.grid, self.router)
         
         # Inject the optimizer into the manager
@@ -141,6 +141,12 @@ class App:
                 zoom_speed = 0.15 # Adjust this to make zooming faster or slower
                 self.renderer.zoom_camera(event.y * zoom_speed, mouse_x, mouse_y)
 
+            # --- NEW: Toggle Visited Nodes ('V' Key) ---
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_v:
+                    self.renderer.show_visited = not self.renderer.show_visited
+                    print(f"Search space visibility: {self.renderer.show_visited}")
+
     def update(self):
         """Plays back the 'tape' recorded in net.search_history frame by frame."""
         # Stop updating if all nets are fully animated
@@ -170,6 +176,12 @@ class App:
             
             # Wipe the purple visited cells off the screen so the next net starts fresh
             self.grid.reset_search_states()
+
+            if self.playback_net_index >= len(self.manager.nets):
+                for completed_net in self.manager.nets:
+                    for node in completed_net.search_history:
+                        node.visited = True
+                print("GUI Playback Complete! Press 'V' to toggle the global search space view.")
 
     def render(self):
         completed_nets = self.manager.nets[:self.playback_net_index]

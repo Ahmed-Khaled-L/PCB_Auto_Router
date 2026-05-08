@@ -4,6 +4,7 @@ class Renderer:
     def __init__(self, grid, theme="dark", cell_size=20):
         self.grid = grid
         self.cell_size = cell_size
+        self.show_visited = True  # <-- NEW: Toggle flag for visited nodes
         
         # Camera & Navigation Support (Ready for panning/zooming)
         self.camera_x = 0
@@ -78,7 +79,7 @@ class Renderer:
                 
                 if node.is_obstacle and not node.is_trace:
                     pygame.draw.rect(self.screen, self.colors["obstacle"], rect)
-                elif node.visited:
+                elif node.visited and self.show_visited:
                     pygame.draw.rect(self.screen, self.colors["visited"], rect)
                     
                 pygame.draw.rect(self.screen, self.colors["grid"], rect, 1)

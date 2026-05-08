@@ -1,0 +1,52 @@
+{
+  "grid": {
+    "width": 70,
+    "height": 50
+  },
+  "components": [
+    {"type": "Header", "ref": "J_PWR", "x": 2, "y": 2, "args": {"num_pins": 2}},
+    {"type": "Header", "ref": "J_L_IN", "x": 2, "y": 20, "args": {"num_pins": 2}},
+    {"type": "Header", "ref": "J_R_IN", "x": 2, "y": 30, "args": {"num_pins": 2}},
+    {"type": "Potentiometer", "ref": "RV1", "x": 10, "y": 10},
+    {"type": "Potentiometer", "ref": "RV2", "x": 10, "y": 30},
+    {"type": "DIP_IC", "ref": "U1", "x": 25, "y": 10, "args": {"pin_pairs": 4}},
+    {"type": "DIP_IC", "ref": "U2", "x": 45, "y": 10, "args": {"pin_pairs": 4}},
+    {"type": "Capacitor", "ref": "C1", "x": 35, "y": 22},
+    {"type": "Capacitor", "ref": "C6", "x": 55, "y": 22},
+    {"type": "Resistor", "ref": "R1", "x": 40, "y": 22},
+    {"type": "Resistor", "ref": "R3", "x": 60, "y": 22},
+    {"type": "Header", "ref": "LS1", "x": 45, "y": 32, "args": {"num_pins": 2}},
+    {"type": "Header", "ref": "LS2", "x": 65, "y": 32, "args": {"num_pins": 2}},
+    {"type": "LED", "ref": "D1", "x": 2, "y": 45, "args": {"color_rgb": [0, 255, 0]}},
+    {"type": "Resistor", "ref": "R2", "x": 8, "y": 45},
+    {"type": "Capacitor", "ref": "C5", "x": 15, "y": 45},
+    {"type": "Capacitor", "ref": "C10", "x": 25, "y": 45}
+  ],
+  "nets": [
+    {"start": "J_PWR:P1", "end": "U1:R2", "color": [255, 50, 50]},
+    {"start": "J_PWR:P1", "end": "U2:R2", "color": [255, 50, 50]},
+    {"start": "J_PWR:P2", "end": "U1:L4", "color": [100, 100, 100]},
+    {"start": "J_PWR:P2", "end": "U2:L4", "color": [100, 100, 100]},
+    {"start": "J_L_IN:P1", "end": "RV1:1", "color": [50, 255, 50]},
+    {"start": "J_L_IN:P2", "end": "RV1:3", "color": [50, 255, 50]},
+    {"start": "RV1:W", "end": "U1:L3", "color": [50, 150, 50]},
+    {"start": "J_R_IN:P1", "end": "RV2:1", "color": [50, 50, 255]},
+    {"start": "J_R_IN:P2", "end": "RV2:3", "color": [50, 50, 255]},
+    {"start": "RV2:W", "end": "U2:L3", "color": [50, 100, 255]},
+    {"start": "U1:R1", "end": "C1:1", "color": [255, 200, 50]},
+    {"start": "C1:2", "end": "R1:1", "color": [255, 200, 100]},
+    {"start": "R1:2", "end": "LS1:P1", "color": [255, 200, 150]},
+    {"start": "U1:L4", "end": "LS1:P2", "color": [100, 100, 100]},
+    {"start": "U2:R1", "end": "C6:1", "color": [200, 100, 255]},
+    {"start": "C6:2", "end": "R3:1", "color": [200, 100, 200]},
+    {"start": "R3:2", "end": "LS2:P1", "color": [200, 100, 150]},
+    {"start": "U2:L4", "end": "LS2:P2", "color": [100, 100, 100]},
+    {"start": "J_PWR:P1", "end": "R2:1", "color": [255, 50, 50]},
+    {"start": "R2:2", "end": "D1:A", "color": [255, 150, 50]},
+    {"start": "D1:K", "end": "J_PWR:P2", "color": [100, 100, 100]},
+    {"start": "C5:1", "end": "U1:L2", "color": [150, 150, 150]},
+    {"start": "C5:2", "end": "U1:L4", "color": [100, 100, 100]},
+    {"start": "C10:1", "end": "U2:L2", "color": [150, 150, 150]},
+    {"start": "C10:2", "end": "U2:L4", "color": [100, 100, 100]}
+  ]
+}

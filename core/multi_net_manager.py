@@ -7,28 +7,35 @@ class MultiNetManager:
         self._assign_net_groups()
 
     def _assign_net_groups(self):
-        """Auto-detects shared nets and groups them into electrical highways."""
-        # 1. Give every net a unique group ID initially
-        for i, net in enumerate(self.nets):
-            net.group_id = i
+        """Assigns shared nets using a clean, Pythonic Coordinate-based Union-Find."""
+        parent = {}
+        def find(i):
+            
+            if parent[i] == i: return i
+            parent[i] = find(parent[i])
+            return parent[i]
+        
+        def union(i, j):
+            root_i, root_j = find(i), find(j)
+            if root_i != root_j:
+                parent[root_i] = root_j
 
-        # 2. Merge groups if they share a pad (Coordinate-based Union Find)
-        changed = True
-        while changed:
-            changed = False
-            for n1 in self.nets:
-                for n2 in self.nets:
-                    if n1.group_id != n2.group_id:
-                        # FIX: Compare via immutable coordinate tuples, NOT object identity!
-                        n1_start = (n1.start_node.x, n1.start_node.y)
-                        n1_end = (n1.end_node.x, n1.end_node.y)
-                        n2_start = (n2.start_node.x, n2.start_node.y)
-                        n2_end = (n2.end_node.x, n2.end_node.y)
-                        
-                        # If any physical pin locations overlap, they belong together
-                        if n1_start in (n2_start, n2_end) or n1_end in (n2_start, n2_end):
-                            n2.group_id = n1.group_id
-                            changed = True
+        # Initialize each net to its own set
+        pin_map = {}
+        for i, net in enumerate(self.nets):
+            parent[i] = i
+            
+            # If a pin coordinate was already mapped, union the sets together
+            coords = [(net.start_node.x, net.start_node.y), (net.end_node.x, net.end_node.y)]
+            for coord in coords:
+                if coord in pin_map:
+                    union(i, pin_map[coord])
+                else:
+                    pin_map[coord] = i
+                    
+        # Apply the resolved group IDs to the nets
+        for i, net in enumerate(self.nets):
+            net.group_id = find(i)
 
     def prepare_queue(self):
         """Delegates the heavy lifting to the injected strategy."""

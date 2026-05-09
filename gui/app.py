@@ -12,7 +12,7 @@ from utils.metrics_logger import MetricsLogger
 class App:
     def __init__(self):
         # 1. Define and Load the Map
-        map_filepath = "boards/test6_steiner_chokepoint.json"  # <-- NEW: Data-Driven JSON Map Loader
+        map_filepath = "boards/Level3_4_deadlock.json"  # <-- NEW: Data-Driven JSON Map Loader
         
         # Extract just the benchmark name (e.g., "test2_mega_mcu")
         self.benchmark_name = map_filepath.split('/')[-1].replace('.json', '')
@@ -20,7 +20,7 @@ class App:
         self.grid, self.manager, self.components = MapLoader.load_from_json(map_filepath)
         
         # 2. Setup the Strategy Pattern (Router + Optimizer)
-        self.router = BFSRouter(self.grid)
+        self.router = AStarRouter(self.grid)
         self.optimizer = SimulatedAnnealingOptimizer(self.grid, self.router)
         
         # Inject the optimizer into the manager
@@ -76,7 +76,9 @@ class App:
         global_time_ms = (time.perf_counter() - global_start_time) * 1000
         
         # Log the global summary!
+
         self.logger.log_run_summary(
+
             self.benchmark_name,    # <-- Pass the benchmark name here!
             self.grid, 
             router_name, 
@@ -89,6 +91,18 @@ class App:
         )
 
         print("Routing complete! Launching GUI Playback...")
+        self._save_run_summary(
+            f"run_summaries/{self.benchmark_name}_summary.txt",  # Save summary with benchmark-specific filename
+            self.benchmark_name,
+            self.grid,
+            router_name,
+            optimizer_name,
+            len(self.manager.nets),
+            successful_routes,
+            failed_routes,
+            total_wirelength,
+            global_time_ms
+        )
         
         # ---------------------------------------------------------
         # 4. PLAYBACK PHASE SETUP
@@ -115,6 +129,10 @@ class App:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        print("[APP] Manual center triggered.")
+                        self.renderer.center_view()
                 
             # --- NEW: Camera Pan (Click and Drag) ---
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -194,12 +212,30 @@ class App:
             
         pygame.display.flip()
 
+
+    def _save_run_summary(self,filepath, benchmark_name, grid, router_name, optimizer_name, total_nets, routed, failed, total_length, total_time_ms):
+        """Dumps the terminal summary to a text file."""        
+        summary_text = (
+            f"Benchmark: {benchmark_name}\n"
+            f"Router:    {router_name}\n"
+            f"Optimizer: {optimizer_name}\n"
+            f"Board:     {grid.width}x{grid.height} cells\n"
+            f"Nets:      {routed}/{total_nets} Successfully Routed ({failed} Deadlocks)\n"
+            f"Length:    {total_length} Total Grid Units (Copper Wirelength)\n"
+            f"Time:      {total_time_ms:.2f} ms (Including Optimization)\n"
+            f"\n\n"
+        )
+        
+        with open(filepath, 'a') as f:
+            f.write(summary_text)
+            
+        print(f"[APP] Run summary saved to: {filepath}")
+
     def run(self):
         while self.running:
             self.process_events()
             self.update()
             self.render()
             self.clock.tick(60)
-            
         pygame.quit()
         sys.exit()

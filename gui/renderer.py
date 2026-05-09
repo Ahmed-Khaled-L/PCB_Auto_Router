@@ -1,3 +1,5 @@
+import os 
+from cmath import rect
 import pygame
 
 class Renderer:
@@ -77,7 +79,7 @@ class Renderer:
                     
                 rect = pygame.Rect(screen_x, screen_y, size, size)
                 
-                if node.is_obstacle and not node.is_trace:
+                if node.is_obstacle and node.net_group is None:
                     pygame.draw.rect(self.screen, self.colors["obstacle"], rect)
                 elif node.visited and self.show_visited:
                     pygame.draw.rect(self.screen, self.colors["visited"], rect)
@@ -164,3 +166,39 @@ class Renderer:
         
         # 4. Clear cache because all pixel coordinates have changed
         self._trace_cache.clear()
+
+
+
+
+        
+        
+
+
+    def center_view(self):
+        """Automatically calculates the perfect zoom and pan to frame the entire board."""
+        screen_w, screen_h = self.screen.get_size()
+        
+        # Calculate the raw pixel size of the board at 1.0 zoom
+        board_w_pixels = self.grid.width * self.cell_size
+        board_h_pixels = self.grid.height * self.cell_size
+        
+        # Calculate the required zoom to fit the board, applying a 0.9 multiplier for a 10% margin
+        zoom_x = (screen_w * 0.9) / board_w_pixels
+        zoom_y = (screen_h * 0.9) / board_h_pixels
+        
+        # Pick the most restrictive zoom, clamp it to prevent extreme scaling
+        self.zoom = max(0.2, min(min(zoom_x, zoom_y), 5.0))
+        
+        # Calculate the necessary offset to center the scaled board
+        self.camera_x = (screen_w - (board_w_pixels * self.zoom)) / 2
+        self.camera_y = (screen_h - (board_h_pixels * self.zoom)) / 2
+        
+        # Invalidate the coordinate cache so traces redraw at the new scale
+        self._trace_cache.clear()
+
+    def save_screenshot(self, filepath):
+        """Captures the current PyGame screen buffer and saves it as a PNG."""
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        pygame.image.save(self.screen, filepath)
+        print(f"[RENDERER] High-Res screenshot saved to: {filepath}")

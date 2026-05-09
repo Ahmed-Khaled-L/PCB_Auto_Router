@@ -13,47 +13,35 @@ class Grid:
         return None
 
     def get_neighbors(self, node, current_net=None):
-        """Returns valid adjacent nodes, allowing traces and pins of the same net to be walked on."""
+        """Returns valid adjacent nodes. A node is only blocked if it belongs to an alien net."""
         neighbors = []
         directions = [
             (0, -1), (0, 1), (-1, 0), (1, 0),   
             (-1, -1), (1, -1), (-1, 1), (1, 1)  
         ]
         
+        group_id = getattr(current_net, 'group_id', -1) if current_net else -1
+
+        # A node blocks us ONLY if it is an obstacle AND does not share our net_group
+        def is_blocked(n):
+            return n and n.is_obstacle and getattr(n, 'net_group', None) != group_id
+
         for dx, dy in directions:
             neighbor = self.get_node(node.x + dx, node.y + dy)
             
-            if neighbor:
-                is_blocked = neighbor.is_obstacle
+            if not neighbor or is_blocked(neighbor):
+                continue
                 
-                # --- FIX: REMOVED neighbor.is_trace ---
-                # If the obstacle is ANY node in our electrical group (trace or pin), bypass it!
-                if is_blocked and current_net:
-                    if getattr(neighbor, 'net_group', None) == getattr(current_net, 'group_id', -1):
-                        is_blocked = False
+            # Apply identical blockage logic to diagonal clipping
+            if dx != 0 and dy != 0: 
+                adj1 = self.get_node(node.x + dx, node.y)
+                adj2 = self.get_node(node.x, node.y + dy)
+                if is_blocked(adj1) or is_blocked(adj2):
+                    continue 
 
-                if not is_blocked:
-                    if dx != 0 and dy != 0: 
-                        adj1 = self.get_node(node.x + dx, node.y)
-                        adj2 = self.get_node(node.x, node.y + dy)
-                        
-                        # Apply the identical group bypass logic to diagonal clipping
-                        adj1_blocked = adj1.is_obstacle if adj1 else False
-                        if adj1_blocked and adj1 and current_net:
-                            if getattr(adj1, 'net_group', None) == getattr(current_net, 'group_id', -1):
-                                adj1_blocked = False
-                                
-                        adj2_blocked = adj2.is_obstacle if adj2 else False
-                        if adj2_blocked and adj2 and current_net:
-                            if getattr(adj2, 'net_group', None) == getattr(current_net, 'group_id', -1):
-                                adj2_blocked = False
-
-                        if adj1_blocked or adj2_blocked:
-                            continue 
-
-                    neighbors.append(neighbor)
+            neighbors.append(neighbor)
+            
         return neighbors
-
     def lock_path(self, net):
         # 1. Lock the traces
         for node in net.path[1:-1]:
@@ -87,24 +75,21 @@ class Grid:
 
 
     def clear_all_routes(self, nets=None):
-        """NUCLEAR SWEEP: Obliterates all optimizer ghost traces and group tags."""
-        for x in range(self.width):
-            for y in range(self.height):
-                node = self.matrix[x][y]
-                
-                # 1. Revert any routed traces to walkable floor space
-                if getattr(node, 'is_trace', False):
-                    node.is_obstacle = False
-                    node.is_trace = False
-                    
-                # 2. PURGE ALL GROUP TAGS (Ghost T-Junction prevention)
-                # Physical pins keep is_obstacle=True, but lose their group identity
-                # until they are actively re-tagged by lock_path().
-                node.net_group = None
-                
-        # 3. Wipe the object arrays so PyGame visualizer starts perfectly fresh
+        """NUCLEAR SWEEP: Obliterates optimizer paths efficiently via Net objects."""
         if nets:
             for net in nets:
+                # Revert path spaces to walkable floor
+                for node in net.path[1:-1]:
+                    node.is_obstacle = False
+                    node.net_group = None
+                    
+                # Untag physical pins (they remain obstacles, but lose group identity)
+                for target in (net.start_node, net.end_node):
+                    grid_node = self.get_node(target.x, target.y)
+                    if grid_node:
+                        grid_node.net_group = None
+                        
+                # Wipe objects for visualizer
                 net.path = []
                 net.search_history = []
                 

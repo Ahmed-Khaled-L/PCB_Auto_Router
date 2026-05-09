@@ -7,24 +7,42 @@
         {
             "type": "DIP_IC",
             "ref": "U1",
-            "x": 5, "y": 10,
+            "x": 4, "y": 3,
             "args": {
-                "pin_pairs": 8, 
-                "row_spacing": 3
+                "pin_pairs": 10, 
+                "row_spacing": 4
             }
         },
         {
             "type": "DIP_IC",
             "ref": "U2",
-            "x": 21, "y": 10,
+            "x": 13, "y": 3,
             "args": {
-                "pin_pairs": 8, 
-                "row_spacing": 3
+                "pin_pairs": 10, 
+                "row_spacing": 4
+            }
+        },
+        {
+            "type": "DIP_IC",
+            "ref": "U3",
+            "x": 4, "y": 1,
+            "args": {
+                "pin_pairs": 2, 
+                "row_spacing": 13
+            }
+        },
+        {
+            "type": "DIP_IC",
+            "ref": "U4",
+            "x": 9, "y": 24,
+            "args": {
+                "pin_pairs": 4, 
+                "row_spacing": 4
             }
         }
     ],
     "nets": [
-        {"start": "U1:R6", "end": "U2:L3"},
-        {"start": "U1:R3", "end": "U2:L6"}
+        {"start": "U1:R10", "end": "U2:L10"},
+        {"start": "U1:R2", "end": "U4:L1"}
     ]
 }
